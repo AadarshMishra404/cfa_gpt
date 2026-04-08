@@ -1,0 +1,605 @@
+{
+    "clienttrnxid": "11223344-5566-7788-99aa-bbccddeeff00",
+    "aaCustomerMobile": "9373286657",
+    "ConsentStatusNotification": {
+        "consentId": "22334455-6677-8899-aabb-ccddeeff0011",
+        "consentHandle": "33445566-7788-99aa-bbcc-ddeeff001122",
+        "consentStatus": "ACTIVE"
+    },
+    "data": [
+        {
+            "fipid": "KotakMahindraBank-FIP",
+            "pan": "IKYPM9091M",
+            "dataStatus": "DELIVERED",
+            "dataDetail": {
+                "pdfbase64": "",
+                "jsonData": {
+                    "?xml": {
+                        "version": "1.0",
+                        "encoding": "UTF-8",
+                        "standalone": "yes"
+                    },
+                    "Account": {
+                        "maskedAccNumber": "XXXXXX6119",
+                        "version": "2.0.0",
+                        "linkedAccRef": "dbc48993-ad97-4ded-ab8c-66a41449de77",
+                        "type": "DEPOSIT",
+                        "xsi:schemaLocation": "http://api.rebit.org.in/FISchema/deposit https://specifications.rebit.org.in/api_schema/account_aggregator/FISchema/deposit_v2.0.0.xsd",
+                        "xmlns:aa": "http://api.rebit.org.in/FISchema/deposit",
+                        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                        "Profile": {
+                            "Holders": {
+                                "type": "SINGLE",
+                                "Holder": {
+                                    "name": "AADARSH ANIL MISHRA",
+                                    "dob": "2002-05-12",
+                                    "mobile": "9373286657",
+                                    "landline": null,
+                                    "address": "A WING B3 FLAT NO 1306,KANAKIA SRA BLDG HANUMAN,NGR ANDHERI EAST,MUM,MAH,400093,IN",
+                                    "email": "iiadarshmishra@gmail.com",
+                                    "pan": "IKYPM9091M",
+                                    "nominee": "NOT-REGISTERED",
+                                    "ckycCompliance": "YES"
+                                }
+                            }
+                        },
+                        "Summary": {
+                            "currentBalance": "49477.49",
+                            "currency": "INR",
+                            "balanceDateTime": "2025-12-20T21:09:38.3",
+                            "accountType": "REGULAR",
+                            "type": "SAVINGS",
+                            "branch": "TARAPUR",
+                            "facility": "NO_FACILITY_GRANTED",
+                            "ifscCode": "KKBK0000672",
+                            "micrCode": "400485028",
+                            "openingDate": "2025-06-25",
+                            "currentODLimit": "0.00",
+                            "drawingLimit": "49477.49",
+                            "status": "ACTIVE",
+                            "PendingTxns": {
+                                "PendingTxn": [
+                                    {
+                                        "amount": null,
+                                        "transactionType": null
+                                    }
+                                ]
+                            }
+                        },
+                        "Transactions": {
+                            "startDate": "2024-12-20",
+                            "endDate": "2025-12-20",
+                            "Transaction": [
+                                {
+                                    "type": "CREDIT",
+                                    "mode": "OTHERS",
+                                    "amount": "1000.00",
+                                    "currentBalance": "1000.00",
+                                    "transactionTimestamp": "2025-06-25T01:59:02",
+                                    "valueDate": "2025-06-25T00:00:00",
+                                    "narration": "KOTAK811/IAFY9VVYXAV7NGM9PBELW2",
+                                    "reference": "00000000",
+                                    "txnId": "M124654"
+                                },
+                                {
+                                    "type": "DEBIT",
+                                    "mode": "UPI",
+                                    "amount": "5000.00",
+                                    "currentBalance": "44477.49",
+                                    "transactionTimestamp": "2025-12-15T09:35:00",
+                                    "valueDate": "2025-12-15T00:00:00",
+                                    "narration": "UPI/Choice Mutual F/529749543573/camspay",
+                                    "reference": "UPI-535012345678",
+                                    "txnId": "S99887766"
+                                },
+                                {
+                                    "type": "DEBIT",
+                                    "mode": "UPI",
+                                    "amount": "5000.00",
+                                    "currentBalance": "39477.49",
+                                    "transactionTimestamp": "2025-12-10T09:40:00",
+                                    "valueDate": "2025-12-10T00:00:00",
+                                    "narration": "UPI/HDFC MF SIP/530123456789/camspay",
+                                    "reference": "UPI-534987654321",
+                                    "txnId": "S88776655"
+                                },
+                                {
+                                    "type": "DEBIT",
+                                    "mode": "NEFT",
+                                    "amount": "13274.31",
+                                    "currentBalance": "26203.18",
+                                    "transactionTimestamp": "2025-12-18T10:20:00",
+                                    "valueDate": "2025-12-18T00:00:00",
+                                    "narration": "NEFT/HDFC SECURITIES/EQUITY PURCHASE/RELIANCE",
+                                    "reference": "NEFT-535112233445",
+                                    "txnId": "S77665544"
+                                },
+                                {
+                                    "type": "CREDIT",
+                                    "mode": "NEFT",
+                                    "amount": "16469.73",
+                                    "currentBalance": "42672.91",
+                                    "transactionTimestamp": "2025-11-30T15:30:00",
+                                    "valueDate": "2025-11-30T00:00:00",
+                                    "narration": "NEFT/HDFC SECURITIES/EQUITY SALE PROCEEDS/INFY",
+                                    "reference": "NEFT-534556677889",
+                                    "txnId": "S66554433"
+                                },
+                                {
+                                    "type": "CREDIT",
+                                    "mode": "NEFT",
+                                    "amount": "15000.00",
+                                    "currentBalance": "57672.91",
+                                    "transactionTimestamp": "2025-10-22T12:00:00",
+                                    "valueDate": "2025-10-22T00:00:00",
+                                    "narration": "NEFT IN22531520021724 CHOICE MUTUAL FUND REFUND A",
+                                    "reference": "NEFT-534112233445",
+                                    "txnId": "S55443322"
+                                },
+                                {
+                                    "type": "CREDIT",
+                                    "mode": "NEFT",
+                                    "amount": "750.00",
+                                    "currentBalance": "58422.91",
+                                    "transactionTimestamp": "2025-11-10T14:00:00",
+                                    "valueDate": "2025-11-10T00:00:00",
+                                    "narration": "NEFT/TCS DIVIDEND/CDSL/IKYPM9091M",
+                                    "reference": "NEFT-534778899001",
+                                    "txnId": "S44332211"
+                                },
+                                {
+                                    "type": "CREDIT",
+                                    "mode": "UPI",
+                                    "amount": "50000.00",
+                                    "currentBalance": "108422.91",
+                                    "transactionTimestamp": "2025-12-01T10:00:00",
+                                    "valueDate": "2025-12-01T00:00:00",
+                                    "narration": "UPI/ARUN ANIL MISHR/571234567890/Salary",
+                                    "reference": "UPI-535001234567",
+                                    "txnId": "S33221100"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "maskedAccountNumber": "XXXXXX6119",
+                "accRefNumber": "dbc48993-ad97-4ded-ab8c-66a41449de77"
+            }
+        },
+        {
+            "fipid": "CAMS-FIP",
+            "pan": "IKYPM9091M",
+            "dataStatus": "DELIVERED",
+            "dataDetail": {
+                "pdfbase64": "",
+                "jsonData": {
+                    "?xml": {
+                        "version": "1.0",
+                        "encoding": "UTF-8",
+                        "standalone": "yes"
+                    },
+                    "Account": {
+                        "maskedAccNumber": "XXXX1234XX",
+                        "version": "2.0.0",
+                        "linkedAccRef": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                        "type": "MUTUAL_FUND",
+                        "xsi:schemaLocation": "http://api.rebit.org.in/FISchema/mutual_fund https://specifications.rebit.org.in/api_schema/account_aggregator/FISchema/mutual_fund_v2.0.0.xsd",
+                        "xmlns:aa": "http://api.rebit.org.in/FISchema/mutual_fund",
+                        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                        "Profile": {
+                            "Holders": {
+                                "type": "SINGLE",
+                                "Holder": {
+                                    "name": "AADARSH ANIL MISHRA",
+                                    "dob": "2002-05-12",
+                                    "mobile": "9373286657",
+                                    "landline": null,
+                                    "address": "A WING B3 FLAT NO 1306,KANAKIA SRA BLDG HANUMAN,NGR ANDHERI EAST,MUM,MAH,400093,IN",
+                                    "email": "iiadarshmishra@gmail.com",
+                                    "pan": "IKYPM9091M",
+                                    "nominee": "REGISTERED",
+                                    "ckycCompliance": "YES",
+                                    "kycStatus": "KYC_VERIFIED"
+                                }
+                            }
+                        },
+                        "Summary": {
+                            "currentValue": "127345.80",
+                            "costValue": "115000.00",
+                            "currency": "INR",
+                            "investmentDateTime": "2025-12-20T15:30:00",
+                            "totalNumUnits": "2856.123",
+                            "totalNumFolios": "3",
+                            "totalNumSchemes": "3",
+                            "Holdings": {
+                                "Holding": [
+                                    {
+                                        "amc": "Axis Mutual Fund",
+                                        "registrar": "CAMS",
+                                        "schemeName": "Axis Bluechip Fund - Direct Plan - Growth",
+                                        "schemeCode": "AXBCFG",
+                                        "isin": "INF846K01EW2",
+                                        "folioNo": "1234567890",
+                                        "units": "1045.234",
+                                        "closingUnits": "1045.234",
+                                        "lienUnits": "0.000",
+                                        "nav": "52.34",
+                                        "navDate": "2025-12-19",
+                                        "costValue": "50000.00",
+                                        "currentValue": "54728.15",
+                                        "dividendType": "GROWTH",
+                                        "holdingMode": "SINGLE",
+                                        "category": "EQUITY",
+                                        "subCategory": "LARGE_CAP",
+                                        "riskRating": "MODERATELY_HIGH",
+                                        "sipActive": true,
+                                        "sipAmount": "5000.00",
+                                        "sipFrequency": "MONTHLY",
+                                        "sipStartDate": "2025-01-15",
+                                        "lastTransactionDate": "2025-12-15"
+                                    },
+                                    {
+                                        "amc": "HDFC Mutual Fund",
+                                        "registrar": "CAMS",
+                                        "schemeName": "HDFC Mid-Cap Opportunities Fund - Direct Plan - Growth",
+                                        "schemeCode": "HDFCMCOG",
+                                        "isin": "INF179K01XQ0",
+                                        "folioNo": "2345678901",
+                                        "units": "523.456",
+                                        "closingUnits": "523.456",
+                                        "lienUnits": "0.000",
+                                        "nav": "95.67",
+                                        "navDate": "2025-12-19",
+                                        "costValue": "40000.00",
+                                        "currentValue": "50087.36",
+                                        "dividendType": "GROWTH",
+                                        "holdingMode": "SINGLE",
+                                        "category": "EQUITY",
+                                        "subCategory": "MID_CAP",
+                                        "riskRating": "HIGH",
+                                        "sipActive": true,
+                                        "sipAmount": "5000.00",
+                                        "sipFrequency": "MONTHLY",
+                                        "sipStartDate": "2025-03-10",
+                                        "lastTransactionDate": "2025-12-10"
+                                    },
+                                    {
+                                        "amc": "Parag Parikh Mutual Fund",
+                                        "registrar": "KFintech",
+                                        "schemeName": "Parag Parikh Flexi Cap Fund - Direct Plan - Growth",
+                                        "schemeCode": "PPFCFG",
+                                        "isin": "INF879O01027",
+                                        "folioNo": "5678901234",
+                                        "units": "368.345",
+                                        "closingUnits": "368.345",
+                                        "lienUnits": "0.000",
+                                        "nav": "67.89",
+                                        "navDate": "2025-12-19",
+                                        "costValue": "25000.00",
+                                        "currentValue": "22530.29",
+                                        "dividendType": "GROWTH",
+                                        "holdingMode": "SINGLE",
+                                        "category": "EQUITY",
+                                        "subCategory": "FLEXI_CAP",
+                                        "riskRating": "MODERATELY_HIGH",
+                                        "sipActive": true,
+                                        "sipAmount": "2000.00",
+                                        "sipFrequency": "MONTHLY",
+                                        "sipStartDate": "2025-06-01",
+                                        "lastTransactionDate": "2025-12-01"
+                                    }
+                                ]
+                            }
+                        },
+                        "Transactions": {
+                            "startDate": "2024-12-20",
+                            "endDate": "2025-12-20",
+                            "Transaction": [
+                                {
+                                    "type": "BUY",
+                                    "txnMode": "SIP",
+                                    "schemeName": "Axis Bluechip Fund - Direct Plan - Growth",
+                                    "isin": "INF846K01EW2",
+                                    "folioNo": "1234567890",
+                                    "amount": "5000.00",
+                                    "units": "95.534",
+                                    "nav": "52.34",
+                                    "navDate": "2025-12-15",
+                                    "orderDate": "2025-12-15T09:30:00",
+                                    "executionDate": "2025-12-16T00:00:00",
+                                    "stampDuty": "0.25",
+                                    "stt": "0.00",
+                                    "trxnCharge": "0.00",
+                                    "narration": "SIP Purchase - Axis Bluechip Fund Direct Growth",
+                                    "reference": "SIP-AX-2025121501",
+                                    "txnId": "MF00001"
+                                },
+                                {
+                                    "type": "BUY",
+                                    "txnMode": "SIP",
+                                    "schemeName": "HDFC Mid-Cap Opportunities Fund - Direct Plan - Growth",
+                                    "isin": "INF179K01XQ0",
+                                    "folioNo": "2345678901",
+                                    "amount": "5000.00",
+                                    "units": "52.267",
+                                    "nav": "95.67",
+                                    "navDate": "2025-12-10",
+                                    "orderDate": "2025-12-10T09:30:00",
+                                    "executionDate": "2025-12-11T00:00:00",
+                                    "stampDuty": "0.25",
+                                    "stt": "0.00",
+                                    "trxnCharge": "0.00",
+                                    "narration": "SIP Purchase - HDFC Mid-Cap Opportunities Direct Growth",
+                                    "reference": "SIP-HD-2025121001",
+                                    "txnId": "MF00002"
+                                },
+                                {
+                                    "type": "BUY",
+                                    "txnMode": "SIP",
+                                    "schemeName": "Parag Parikh Flexi Cap Fund - Direct Plan - Growth",
+                                    "isin": "INF879O01027",
+                                    "folioNo": "5678901234",
+                                    "amount": "2000.00",
+                                    "units": "29.457",
+                                    "nav": "67.89",
+                                    "navDate": "2025-12-01",
+                                    "orderDate": "2025-12-01T09:30:00",
+                                    "executionDate": "2025-12-02T00:00:00",
+                                    "stampDuty": "0.10",
+                                    "stt": "0.00",
+                                    "trxnCharge": "0.00",
+                                    "narration": "SIP Purchase - Parag Parikh Flexi Cap Direct Growth",
+                                    "reference": "SIP-PP-2025120101",
+                                    "txnId": "MF00003"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "maskedAccountNumber": "XXXX1234XX",
+                "accRefNumber": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+            }
+        },
+        {
+            "fipid": "CDSL-FIP",
+            "pan": "IKYPM9091M",
+            "dataStatus": "DELIVERED",
+            "dataDetail": {
+                "pdfbase64": "",
+                "jsonData": {
+                    "?xml": {
+                        "version": "1.0",
+                        "encoding": "UTF-8",
+                        "standalone": "yes"
+                    },
+                    "Account": {
+                        "maskedAccNumber": "XXXX5678XX",
+                        "version": "2.0.0",
+                        "linkedAccRef": "9a8b7c6d-5e4f-3210-9876-fedcba987654",
+                        "type": "EQUITIES",
+                        "xsi:schemaLocation": "http://api.rebit.org.in/FISchema/equities https://specifications.rebit.org.in/api_schema/account_aggregator/FISchema/equities_v2.0.0.xsd",
+                        "xmlns:aa": "http://api.rebit.org.in/FISchema/equities",
+                        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                        "Profile": {
+                            "Holders": {
+                                "type": "SINGLE",
+                                "Holder": {
+                                    "name": "AADARSH ANIL MISHRA",
+                                    "dob": "2002-05-12",
+                                    "mobile": "9373286657",
+                                    "landline": null,
+                                    "address": "A WING B3 FLAT NO 1306,KANAKIA SRA BLDG HANUMAN,NGR ANDHERI EAST,MUM,MAH,400093,IN",
+                                    "email": "iiadarshmishra@gmail.com",
+                                    "pan": "IKYPM9091M",
+                                    "nominee": "REGISTERED",
+                                    "ckycCompliance": "YES",
+                                    "dematId": "1208160012345678",
+                                    "dpId": "12081600",
+                                    "clientId": "12345678",
+                                    "brokerName": "HDFC Securities"
+                                }
+                            }
+                        },
+                        "Summary": {
+                            "currentValue": "198456.30",
+                            "investmentValue": "175500.00",
+                            "totalHoldings": "5",
+                            "currency": "INR",
+                            "balanceDateTime": "2025-12-20T15:30:00",
+                            "Holdings": {
+                                "Holding": [
+                                    {
+                                        "isin": "INE002A01018",
+                                        "companyName": "Reliance Industries Limited",
+                                        "symbol": "RELIANCE",
+                                        "quantity": "15",
+                                        "faceValue": "10.00",
+                                        "avgCostPrice": "2450.00",
+                                        "currentPrice": "2678.50",
+                                        "holdingValue": "40177.50",
+                                        "pnl": "3427.50",
+                                        "pnlPercentage": "9.33",
+                                        "exchange": "NSE",
+                                        "sector": "OIL_GAS_PETROCHEMICALS",
+                                        "instrumentType": "EQUITY",
+                                        "holdingMode": "DEMAT",
+                                        "pledgedQuantity": "0",
+                                        "lockInQuantity": "0",
+                                        "lastTradedDate": "2025-12-19"
+                                    },
+                                    {
+                                        "isin": "INE467B01029",
+                                        "companyName": "Tata Consultancy Services Limited",
+                                        "symbol": "TCS",
+                                        "quantity": "10",
+                                        "faceValue": "1.00",
+                                        "avgCostPrice": "3850.00",
+                                        "currentPrice": "4125.30",
+                                        "holdingValue": "41253.00",
+                                        "pnl": "2753.00",
+                                        "pnlPercentage": "7.15",
+                                        "exchange": "NSE",
+                                        "sector": "INFORMATION_TECHNOLOGY",
+                                        "instrumentType": "EQUITY",
+                                        "holdingMode": "DEMAT",
+                                        "pledgedQuantity": "0",
+                                        "lockInQuantity": "0",
+                                        "lastTradedDate": "2025-12-19"
+                                    },
+                                    {
+                                        "isin": "INE009A01021",
+                                        "companyName": "Infosys Limited",
+                                        "symbol": "INFY",
+                                        "quantity": "25",
+                                        "faceValue": "5.00",
+                                        "avgCostPrice": "1520.00",
+                                        "currentPrice": "1687.45",
+                                        "holdingValue": "42186.25",
+                                        "pnl": "4186.25",
+                                        "pnlPercentage": "11.01",
+                                        "exchange": "NSE",
+                                        "sector": "INFORMATION_TECHNOLOGY",
+                                        "instrumentType": "EQUITY",
+                                        "holdingMode": "DEMAT",
+                                        "pledgedQuantity": "0",
+                                        "lockInQuantity": "0",
+                                        "lastTradedDate": "2025-12-19"
+                                    },
+                                    {
+                                        "isin": "INE040A01034",
+                                        "companyName": "HDFC Bank Limited",
+                                        "symbol": "HDFCBANK",
+                                        "quantity": "20",
+                                        "faceValue": "1.00",
+                                        "avgCostPrice": "1650.00",
+                                        "currentPrice": "1789.60",
+                                        "holdingValue": "35792.00",
+                                        "pnl": "2792.00",
+                                        "pnlPercentage": "8.46",
+                                        "exchange": "NSE",
+                                        "sector": "BANKING",
+                                        "instrumentType": "EQUITY",
+                                        "holdingMode": "DEMAT",
+                                        "pledgedQuantity": "0",
+                                        "lockInQuantity": "0",
+                                        "lastTradedDate": "2025-12-19"
+                                    },
+                                    {
+                                        "isin": "INE669E01016",
+                                        "companyName": "Bajaj Finance Limited",
+                                        "symbol": "BAJFINANCE",
+                                        "quantity": "5",
+                                        "faceValue": "2.00",
+                                        "avgCostPrice": "7200.00",
+                                        "currentPrice": "7856.90",
+                                        "holdingValue": "39284.50",
+                                        "pnl": "3284.50",
+                                        "pnlPercentage": "9.12",
+                                        "exchange": "NSE",
+                                        "sector": "FINANCIAL_SERVICES",
+                                        "instrumentType": "EQUITY",
+                                        "holdingMode": "DEMAT",
+                                        "pledgedQuantity": "0",
+                                        "lockInQuantity": "0",
+                                        "lastTradedDate": "2025-12-18"
+                                    }
+                                ]
+                            }
+                        },
+                        "Transactions": {
+                            "startDate": "2024-12-20",
+                            "endDate": "2025-12-20",
+                            "Transaction": [
+                                {
+                                    "type": "BUY",
+                                    "tradeDate": "2025-12-18T10:15:32",
+                                    "settlementDate": "2025-12-20T00:00:00",
+                                    "exchange": "NSE",
+                                    "companyName": "Reliance Industries Limited",
+                                    "symbol": "RELIANCE",
+                                    "isin": "INE002A01018",
+                                    "quantity": "5",
+                                    "price": "2650.00",
+                                    "totalAmount": "13250.00",
+                                    "brokerage": "13.25",
+                                    "stt": "1.32",
+                                    "transactionCharges": "4.44",
+                                    "gst": "3.18",
+                                    "stampDuty": "1.99",
+                                    "sebiTurnoverFee": "0.13",
+                                    "totalCharges": "24.31",
+                                    "netAmount": "13274.31",
+                                    "orderId": "ORD-20251218-001",
+                                    "tradeId": "TRD-20251218-001",
+                                    "orderType": "MARKET",
+                                    "productType": "CNC",
+                                    "narration": "Buy - Reliance Industries Ltd - NSE",
+                                    "txnId": "EQ00001"
+                                },
+                                {
+                                    "type": "SELL",
+                                    "tradeDate": "2025-11-28T14:22:10",
+                                    "settlementDate": "2025-12-02T00:00:00",
+                                    "exchange": "NSE",
+                                    "companyName": "Infosys Limited",
+                                    "symbol": "INFY",
+                                    "isin": "INE009A01021",
+                                    "quantity": "10",
+                                    "price": "1650.00",
+                                    "totalAmount": "16500.00",
+                                    "brokerage": "16.50",
+                                    "stt": "4.12",
+                                    "transactionCharges": "5.53",
+                                    "gst": "3.96",
+                                    "stampDuty": "0.00",
+                                    "sebiTurnoverFee": "0.16",
+                                    "totalCharges": "30.27",
+                                    "netAmount": "16469.73",
+                                    "orderId": "ORD-20251128-001",
+                                    "tradeId": "TRD-20251128-001",
+                                    "orderType": "MARKET",
+                                    "productType": "CNC",
+                                    "narration": "Sell - Infosys Ltd - NSE",
+                                    "txnId": "EQ00002"
+                                },
+                                {
+                                    "type": "DIVIDEND",
+                                    "tradeDate": "2025-11-05T00:00:00",
+                                    "settlementDate": "2025-11-10T00:00:00",
+                                    "exchange": "NSE",
+                                    "companyName": "Tata Consultancy Services Limited",
+                                    "symbol": "TCS",
+                                    "isin": "INE467B01029",
+                                    "quantity": "10",
+                                    "price": "0.00",
+                                    "totalAmount": "750.00",
+                                    "brokerage": "0.00",
+                                    "stt": "0.00",
+                                    "transactionCharges": "0.00",
+                                    "gst": "0.00",
+                                    "stampDuty": "0.00",
+                                    "sebiTurnoverFee": "0.00",
+                                    "totalCharges": "0.00",
+                                    "netAmount": "750.00",
+                                    "orderId": null,
+                                    "tradeId": null,
+                                    "orderType": null,
+                                    "productType": null,
+                                    "narration": "Dividend - TCS Ltd - Rs 75 per share",
+                                    "txnId": "EQ00003"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "maskedAccountNumber": "XXXX5678XX",
+                "accRefNumber": "9a8b7c6d-5e4f-3210-9876-fedcba987654"
+            }
+        }
+    ],
+    "Status_Code": "200",
+    "CustomerUniqueIdentifier": "",
+    "resp_code": "200",
+    "txnId": "aabbccdd-eeff-0011-2233-445566778899",
+    "timestamp": "2025-12-20T21:15:00"
+}

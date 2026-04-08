@@ -1,0 +1,7 @@
+streamlit
+openai
+pymongo[srv]
+plotly
+pandas
+anthropic
+python-dotenv

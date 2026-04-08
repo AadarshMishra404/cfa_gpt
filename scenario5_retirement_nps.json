@@ -1,0 +1,219 @@
+{
+    "clienttrnxid": "dd445566-7788-99aa-bbcc-ddeeff001122",
+    "aaCustomerMobile": "9373286657",
+    "ConsentStatusNotification": {
+        "consentId": "ee556677-8899-aabb-ccdd-eeff00112233",
+        "consentHandle": "ff667788-99aa-bbcc-ddee-ff0011223344",
+        "consentStatus": "ACTIVE"
+    },
+    "data": [
+        {
+            "fipid": "NSDL-CRA-FIP",
+            "pan": "IKYPM9091M",
+            "dataStatus": "DELIVERED",
+            "dataDetail": {
+                "pdfbase64": "",
+                "jsonData": {
+                    "?xml": {
+                        "version": "1.0",
+                        "encoding": "UTF-8",
+                        "standalone": "yes"
+                    },
+                    "Account": {
+                        "maskedAccNumber": "XXXX9012XX",
+                        "version": "2.0.0",
+                        "linkedAccRef": "e1f2a3b4-c5d6-7890-ef12-a3b4c5d67890",
+                        "type": "NPS",
+                        "xsi:schemaLocation": "http://api.rebit.org.in/FISchema/nps https://specifications.rebit.org.in/api_schema/account_aggregator/FISchema/nps_v2.0.0.xsd",
+                        "xmlns:aa": "http://api.rebit.org.in/FISchema/nps",
+                        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                        "Profile": {
+                            "Holders": {
+                                "type": "SINGLE",
+                                "Holder": {
+                                    "name": "AADARSH ANIL MISHRA",
+                                    "dob": "2002-05-12",
+                                    "mobile": "9373286657",
+                                    "landline": null,
+                                    "address": "A WING B3 FLAT NO 1306,KANAKIA SRA BLDG HANUMAN,NGR ANDHERI EAST,MUM,MAH,400093,IN",
+                                    "email": "iiadarshmishra@gmail.com",
+                                    "pan": "IKYPM9091M",
+                                    "nominee": "REGISTERED",
+                                    "ckycCompliance": "YES",
+                                    "pranNumber": "1101234567890",
+                                    "npsAccountType": "TIER_I",
+                                    "pensionFundManager": "HDFC Pension Management Company"
+                                }
+                            }
+                        },
+                        "Summary": {
+                            "currentValue": "245678.90",
+                            "totalContribution": "210000.00",
+                            "totalGains": "35678.90",
+                            "gainsPercentage": "16.99",
+                            "currency": "INR",
+                            "balanceDateTime": "2025-12-20T15:30:00",
+                            "schemePreference": "ACTIVE_CHOICE",
+                            "Holdings": {
+                                "Holding": [
+                                    {
+                                        "schemeType": "SCHEME_E",
+                                        "schemeName": "HDFC Pension Fund - Scheme E (Equity)",
+                                        "allocationPercentage": "75",
+                                        "units": "4523.456",
+                                        "nav": "40.78",
+                                        "navDate": "2025-12-19",
+                                        "investedAmount": "157500.00",
+                                        "currentValue": "184466.36",
+                                        "returns": "26966.36",
+                                        "returnsPercentage": "17.12",
+                                        "assetClass": "EQUITY",
+                                        "riskRating": "HIGH"
+                                    },
+                                    {
+                                        "schemeType": "SCHEME_C",
+                                        "schemeName": "HDFC Pension Fund - Scheme C (Corporate Bonds)",
+                                        "allocationPercentage": "15",
+                                        "units": "1456.789",
+                                        "nav": "28.45",
+                                        "navDate": "2025-12-19",
+                                        "investedAmount": "31500.00",
+                                        "currentValue": "41445.85",
+                                        "returns": "9945.85",
+                                        "returnsPercentage": "31.57",
+                                        "assetClass": "CORPORATE_BONDS",
+                                        "riskRating": "MODERATE"
+                                    },
+                                    {
+                                        "schemeType": "SCHEME_G",
+                                        "schemeName": "HDFC Pension Fund - Scheme G (Government Securities)",
+                                        "allocationPercentage": "10",
+                                        "units": "789.123",
+                                        "nav": "24.89",
+                                        "navDate": "2025-12-19",
+                                        "investedAmount": "21000.00",
+                                        "currentValue": "19649.27",
+                                        "returns": "-1350.73",
+                                        "returnsPercentage": "-6.43",
+                                        "assetClass": "GOVERNMENT_SECURITIES",
+                                        "riskRating": "LOW"
+                                    }
+                                ]
+                            },
+                            "TaxBenefits": {
+                                "section80CCD_1": "150000.00",
+                                "section80CCD_1B": "50000.00",
+                                "section80CCD_2": "0.00",
+                                "totalTaxDeduction": "200000.00"
+                            }
+                        },
+                        "Transactions": {
+                            "startDate": "2024-12-20",
+                            "endDate": "2025-12-20",
+                            "Transaction": [
+                                {
+                                    "type": "CONTRIBUTION",
+                                    "txnMode": "VOLUNTARY",
+                                    "amount": "25000.00",
+                                    "units": "612.345",
+                                    "nav": "40.82",
+                                    "navDate": "2025-12-15",
+                                    "transactionDate": "2025-12-15T10:00:00",
+                                    "schemeType": "SCHEME_E",
+                                    "narration": "Voluntary Contribution - Scheme E (Equity)",
+                                    "reference": "NPS-VOL-20251215",
+                                    "txnId": "NPS00001"
+                                },
+                                {
+                                    "type": "CONTRIBUTION",
+                                    "txnMode": "VOLUNTARY",
+                                    "amount": "25000.00",
+                                    "units": "615.789",
+                                    "nav": "40.60",
+                                    "navDate": "2025-11-15",
+                                    "transactionDate": "2025-11-15T10:00:00",
+                                    "schemeType": "SCHEME_E",
+                                    "narration": "Voluntary Contribution - Scheme E (Equity)",
+                                    "reference": "NPS-VOL-20251115",
+                                    "txnId": "NPS00002"
+                                },
+                                {
+                                    "type": "CONTRIBUTION",
+                                    "txnMode": "VOLUNTARY",
+                                    "amount": "25000.00",
+                                    "units": "620.123",
+                                    "nav": "40.31",
+                                    "navDate": "2025-10-15",
+                                    "transactionDate": "2025-10-15T10:00:00",
+                                    "schemeType": "SCHEME_E",
+                                    "narration": "Voluntary Contribution - Scheme E (Equity)",
+                                    "reference": "NPS-VOL-20251015",
+                                    "txnId": "NPS00003"
+                                },
+                                {
+                                    "type": "CONTRIBUTION",
+                                    "txnMode": "VOLUNTARY",
+                                    "amount": "5000.00",
+                                    "units": "175.678",
+                                    "nav": "28.46",
+                                    "navDate": "2025-10-15",
+                                    "transactionDate": "2025-10-15T10:05:00",
+                                    "schemeType": "SCHEME_C",
+                                    "narration": "Voluntary Contribution - Scheme C (Corporate Bonds)",
+                                    "reference": "NPS-VOL-C-20251015",
+                                    "txnId": "NPS00004"
+                                },
+                                {
+                                    "type": "CONTRIBUTION",
+                                    "txnMode": "VOLUNTARY",
+                                    "amount": "5000.00",
+                                    "units": "200.891",
+                                    "nav": "24.89",
+                                    "navDate": "2025-10-15",
+                                    "transactionDate": "2025-10-15T10:10:00",
+                                    "schemeType": "SCHEME_G",
+                                    "narration": "Voluntary Contribution - Scheme G (Govt Securities)",
+                                    "reference": "NPS-VOL-G-20251015",
+                                    "txnId": "NPS00005"
+                                },
+                                {
+                                    "type": "SCHEME_REBALANCE",
+                                    "txnMode": "AUTO",
+                                    "amount": "0.00",
+                                    "units": "0.000",
+                                    "nav": "0.00",
+                                    "navDate": "2025-09-01",
+                                    "transactionDate": "2025-09-01T00:00:00",
+                                    "schemeType": "ALL",
+                                    "narration": "Annual Auto-Rebalance to maintain 75:15:10 allocation",
+                                    "reference": "NPS-REB-20250901",
+                                    "txnId": "NPS00006"
+                                },
+                                {
+                                    "type": "CONTRIBUTION",
+                                    "txnMode": "VOLUNTARY",
+                                    "amount": "50000.00",
+                                    "units": "1289.456",
+                                    "nav": "38.78",
+                                    "navDate": "2025-03-28",
+                                    "transactionDate": "2025-03-28T14:00:00",
+                                    "schemeType": "SCHEME_E",
+                                    "narration": "Year-End Contribution for 80CCD(1B) - Scheme E",
+                                    "reference": "NPS-YE-20250328",
+                                    "txnId": "NPS00007"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "maskedAccountNumber": "XXXX9012XX",
+                "accRefNumber": "e1f2a3b4-c5d6-7890-ef12-a3b4c5d67890"
+            }
+        }
+    ],
+    "Status_Code": "200",
+    "CustomerUniqueIdentifier": "",
+    "resp_code": "200",
+    "txnId": "11223344-aabb-ccdd-eeff-556677889900",
+    "timestamp": "2025-12-20T15:30:00"
+}
