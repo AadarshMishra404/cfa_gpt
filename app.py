@@ -13,19 +13,69 @@ load_dotenv()
 # ============================================================
 # CONFIGURATION
 # ============================================================
-OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY", os.environ.get("OPENAI_API_KEY", ""))
-FINE_TUNED_MODEL = st.secrets.get("FINE_TUNED_MODEL", os.environ.get("FINE_TUNED_MODEL", "ft:gpt-4o-mini-2024-07-18:northstar:cfa-expert-v2:DIC778WZ"))
+def _get_secret(key, default=""):
+    try:
+        return st.secrets[key]
+    except (FileNotFoundError, KeyError):
+        return os.environ.get(key, default)
+
+OPENAI_API_KEY = _get_secret("OPENAI_API_KEY")
+FINE_TUNED_MODEL = _get_secret("FINE_TUNED_MODEL", "ft:gpt-4o-mini-2024-07-18:northstar:cfa-expert-v2:DIC778WZ")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-SCENARIOS = {
+STAR_RATINGS_FILE = "star_ratings_detailed_1.csv"
+SCENARIOS_DIR = os.path.join(BASE_DIR, "scenarios")
+
+# Original 10 scenarios (root directory)
+ORIGINAL_SCENARIOS = {
     "Mutual Funds Portfolio": "scenario1_mutual_funds.json",
     "Equities/Stocks Portfolio": "scenario2_stocks_holdings.json",
     "Combined Portfolio (Deposit + MF + Equities)": "scenario3_combined_portfolio.json",
     "Fixed Deposits Portfolio": "scenario4_fixed_deposits.json",
     "Retirement NPS Portfolio": "scenario5_retirement_nps.json",
     "Gold & Government Bonds Portfolio": "scenario6_gold_bonds.json",
+    "Young Professional (24, Single, Aggressive)": "scenario7_young_professional.json",
+    "Mid-Career Family (35, Married, 2 Kids)": "scenario8_mid_career_family.json",
+    "Pre-Retirement (55, Conservative)": "scenario9_pre_retirement.json",
+    "Self-Employed Business Owner (40, Chennai)": "scenario10_business_owner.json",
 }
-STAR_RATINGS_FILE = "star_ratings_detailed_1.csv"
+
+@st.cache_data
+def discover_scenarios():
+    """Auto-discover all scenario JSON files from scenarios/ subfolders."""
+    import glob
+    categories = {"Original (1-10)": {k: os.path.join(BASE_DIR, v) for k, v in ORIGINAL_SCENARIOS.items()}}
+
+    if not os.path.isdir(SCENARIOS_DIR):
+        return categories
+
+    for cat_folder in sorted(os.listdir(SCENARIOS_DIR)):
+        cat_path = os.path.join(SCENARIOS_DIR, cat_folder)
+        if not os.path.isdir(cat_path):
+            continue
+        cat_label = cat_folder.replace("_", " ").title()
+        files = sorted(glob.glob(os.path.join(cat_path, "*.json")))
+        if not files:
+            continue
+        cat_scenarios = {}
+        for f in files:
+            basename = os.path.basename(f).replace(".json", "")
+            # Try to extract label from JSON
+            try:
+                with open(f, "r") as fh:
+                    d = json.load(fh)
+                demo = d.get("demographics", {})
+                name = demo.get("name", "")
+                age = demo.get("age", "")
+                city = demo.get("city", "")
+                occ = demo.get("occupation", {}).get("designation", "")
+                label = f"{name}, {age}, {occ}, {city}" if name else basename
+            except Exception:
+                label = basename
+            cat_scenarios[label] = f
+        categories[cat_label] = cat_scenarios
+
+    return categories
 
 
 # ============================================================
@@ -160,13 +210,21 @@ st.markdown("""
 # ============================================================
 # DATA EXTRACTION FUNCTIONS (from cfa_analyzer.py)
 # ============================================================
-def load_scenario(file_name):
-    path = os.path.join(BASE_DIR, file_name)
+def load_scenario(file_path):
+    """Load scenario JSON. Accepts full path or filename (for original 10)."""
+    if os.path.isabs(file_path) and os.path.exists(file_path):
+        path = file_path
+    else:
+        path = os.path.join(BASE_DIR, file_path)
     with open(path, "r") as f:
         return json.load(f)
 
 
 def extract_investor_profile(data):
+    """Extract investor profile from AA data + top-level demographics if present."""
+    profile_out = {}
+
+    # Try extracting from AA account holder data
     for item in data.get("data", []):
         detail = item.get("dataDetail", {})
         json_data = detail.get("jsonData", {})
@@ -182,7 +240,7 @@ def extract_investor_profile(data):
                     age = (datetime.now() - dob).days // 365
                 except ValueError:
                     pass
-            return {
+            profile_out = {
                 "name": holder.get("name", "N/A"),
                 "dob": holder.get("dob", "N/A"),
                 "age": age,
@@ -192,11 +250,45 @@ def extract_investor_profile(data):
                 "nominee": holder.get("nominee", "N/A"),
                 "kyc": holder.get("ckycCompliance", "N/A"),
             }
-    return {}
+            break
+
+    # Override/enrich with top-level demographics block (scenarios 7-10)
+    demo = data.get("demographics", {})
+    if demo:
+        if demo.get("name"):
+            profile_out["name"] = demo["name"]
+        if demo.get("dob"):
+            profile_out["dob"] = demo["dob"]
+            try:
+                dob = datetime.strptime(demo["dob"], "%Y-%m-%d")
+                profile_out["age"] = (datetime.now() - dob).days // 365
+            except ValueError:
+                pass
+        profile_out["gender"] = demo.get("gender", "N/A")
+        profile_out["marital_status"] = demo.get("marital_status", "N/A")
+        profile_out["residential_status"] = demo.get("residential_status", "RESIDENT")
+        profile_out["city"] = demo.get("city", "N/A")
+        profile_out["dependents"] = demo.get("dependents", [])
+        profile_out["occupation"] = demo.get("occupation", {})
+        profile_out["education"] = demo.get("education", {})
+
+    # Attach top-level financial blocks if present
+    profile_out["income"] = data.get("income", {})
+    profile_out["expenses"] = data.get("expenses", {})
+    profile_out["liabilities"] = data.get("liabilities", {})
+    profile_out["insurance"] = data.get("insurance", {})
+    profile_out["goals"] = data.get("goals", [])
+    profile_out["tax"] = data.get("tax", {})
+
+    return profile_out
 
 
 def extract_all_accounts(data):
-    accounts = {"deposit": [], "mutual_fund": [], "equities": []}
+    accounts = {
+        "deposit": [], "mutual_fund": [], "equities": [],
+        "fixed_deposit": [], "nps": [], "govt_securities": [],
+        "epf": [], "ppf": [],
+    }
     for item in data.get("data", []):
         fip = item.get("fipid", "Unknown")
         detail = item.get("dataDetail", {})
@@ -207,16 +299,28 @@ def extract_all_accounts(data):
         txns = account.get("Transactions", {}).get("Transaction", [])
 
         if acc_type == "DEPOSIT":
-            accounts["deposit"].append({
-                "fip": fip,
-                "balance": float(summary.get("currentBalance", 0)),
-                "type": summary.get("type", "N/A"),
-                "branch": summary.get("branch", "N/A"),
-                "ifsc": summary.get("ifscCode", "N/A"),
-                "status": summary.get("status", "N/A"),
-                "opening_date": summary.get("openingDate", "N/A"),
-                "transactions": txns,
-            })
+            # Check if this is a term deposit (FD) or savings
+            dep_type = summary.get("type", "")
+            if dep_type in ("TERM_DEPOSIT", "NRE_TERM_DEPOSIT") or summary.get("accountType") == "FIXED":
+                fds = summary.get("FixedDeposits", {}).get("FixedDeposit", [])
+                fd_total = sum(float(fd.get("currentValue", 0)) for fd in fds)
+                accounts["fixed_deposit"].append({
+                    "fip": fip, "total_value": fd_total,
+                    "account_sub_type": summary.get("accountType", "FIXED"),
+                    "deposits": fds, "transactions": txns,
+                })
+            else:
+                accounts["deposit"].append({
+                    "fip": fip,
+                    "balance": float(summary.get("currentBalance", 0)),
+                    "type": summary.get("type", "N/A"),
+                    "account_sub_type": summary.get("accountType", "REGULAR"),
+                    "branch": summary.get("branch", "N/A"),
+                    "ifsc": summary.get("ifscCode", "N/A"),
+                    "status": summary.get("status", "N/A"),
+                    "opening_date": summary.get("openingDate", "N/A"),
+                    "transactions": txns,
+                })
 
         elif acc_type == "MUTUAL_FUND":
             holdings = summary.get("Holdings", {}).get("Holding", [])
@@ -240,6 +344,48 @@ def extract_all_accounts(data):
                 "transactions": txns,
             })
 
+        elif acc_type == "NPS":
+            holdings = summary.get("Holdings", {}).get("Holding", [])
+            accounts["nps"].append({
+                "fip": fip,
+                "current_value": float(summary.get("currentValue", 0)),
+                "total_contribution": float(summary.get("totalContribution", 0)),
+                "gains": float(summary.get("totalGains", 0)),
+                "scheme_preference": summary.get("schemePreference", "N/A"),
+                "tax_benefits": summary.get("TaxBenefits", {}),
+                "retirement_projection": summary.get("RetirementProjection", {}),
+                "holdings": holdings,
+                "transactions": txns,
+            })
+
+        elif acc_type == "GOVERNMENT_SECURITIES":
+            holdings = summary.get("Holdings", {}).get("Holding", [])
+            accounts["govt_securities"].append({
+                "fip": fip,
+                "current_value": float(summary.get("currentValue", 0)),
+                "investment_value": float(summary.get("investmentValue", 0)),
+                "holdings": holdings,
+                "transactions": txns,
+            })
+
+        elif acc_type == "EPF":
+            accounts["epf"].append({
+                "fip": fip,
+                "balance": float(summary.get("currentBalance", 0)),
+                "interest_rate": summary.get("interestRate", "N/A"),
+                "member_since": summary.get("memberSince", "N/A"),
+                "summary": summary,
+            })
+
+        elif acc_type == "PPF":
+            accounts["ppf"].append({
+                "fip": fip,
+                "balance": float(summary.get("currentBalance", 0)),
+                "interest_rate": summary.get("interestRate", "N/A"),
+                "maturity_date": summary.get("maturityDate", summary.get("newMaturityDate", "N/A")),
+                "summary": summary,
+            })
+
     return accounts
 
 
@@ -249,9 +395,16 @@ def compute_portfolio_totals(accounts):
     mf_cost = sum(a["cost_value"] for a in accounts["mutual_fund"])
     eq_current = sum(a["current_value"] for a in accounts["equities"])
     eq_invested = sum(a["investment_value"] for a in accounts["equities"])
+    fd_total = sum(a["total_value"] for a in accounts.get("fixed_deposit", []))
+    nps_current = sum(a["current_value"] for a in accounts.get("nps", []))
+    nps_invested = sum(a["total_contribution"] for a in accounts.get("nps", []))
+    gs_current = sum(a["current_value"] for a in accounts.get("govt_securities", []))
+    gs_invested = sum(a["investment_value"] for a in accounts.get("govt_securities", []))
+    epf_total = sum(a["balance"] for a in accounts.get("epf", []))
+    ppf_total = sum(a["balance"] for a in accounts.get("ppf", []))
 
-    total_value = deposit_total + mf_current + eq_current
-    total_invested = deposit_total + mf_cost + eq_invested
+    total_value = deposit_total + mf_current + eq_current + fd_total + nps_current + gs_current + epf_total + ppf_total
+    total_invested = deposit_total + mf_cost + eq_invested + fd_total + nps_invested + gs_invested + epf_total + ppf_total
     total_pnl = total_value - total_invested
     pnl_pct = (total_pnl / total_invested * 100) if total_invested > 0 else 0
 
@@ -261,6 +414,13 @@ def compute_portfolio_totals(accounts):
         "mf_cost": mf_cost,
         "eq_current": eq_current,
         "eq_invested": eq_invested,
+        "fd_total": fd_total,
+        "nps_current": nps_current,
+        "nps_invested": nps_invested,
+        "gs_current": gs_current,
+        "gs_invested": gs_invested,
+        "epf_total": epf_total,
+        "ppf_total": ppf_total,
         "total_value": total_value,
         "total_invested": total_invested,
         "total_pnl": total_pnl,
@@ -477,14 +637,37 @@ def build_cfa_prompt(investor_profile, accounts, scenario_label):
     holdings_summary = []
     txn_summary = []
 
+    # --- Bank Deposits ---
     for dep in accounts["deposit"]:
-        holdings_summary.append({"account_type": "Bank Deposit", "fip": dep["fip"], "balance": dep["balance"]})
+        holdings_summary.append({
+            "account_type": "Bank Deposit", "fip": dep["fip"], "balance": dep["balance"],
+            "sub_type": dep.get("account_sub_type", "SAVINGS"),
+        })
         txn_summary.append({
             "account_type": "DEPOSIT", "total_transactions": len(dep["transactions"]),
             "total_inflow": sum(float(t.get("amount", 0)) for t in dep["transactions"] if t.get("type") == "CREDIT"),
             "total_outflow": sum(float(t.get("amount", 0)) for t in dep["transactions"] if t.get("type") == "DEBIT"),
         })
 
+    # --- Fixed Deposits ---
+    for fd_acc in accounts.get("fixed_deposit", []):
+        fd_h = []
+        for fd in fd_acc.get("deposits", []):
+            fd_h.append({
+                "fd_number": fd.get("fdNumber"), "principal": fd.get("principalAmount"),
+                "current_value": fd.get("currentValue"), "rate": fd.get("interestRate"),
+                "tenure_months": fd.get("tenureMonths"), "maturity_date": fd.get("maturityDate"),
+                "payout_mode": fd.get("interestPayoutMode"), "tax_saver": fd.get("taxSaverFD", False),
+                "status": fd.get("status"),
+            })
+        holdings_summary.append({
+            "account_type": "Fixed Deposits", "total_value": fd_acc["total_value"], "deposits": fd_h,
+        })
+        txn_summary.append({
+            "account_type": "FIXED_DEPOSIT", "total_transactions": len(fd_acc.get("transactions", [])),
+        })
+
+    # --- Mutual Funds ---
     for mf in accounts["mutual_fund"]:
         mf_h = []
         for h in mf["holdings"]:
@@ -493,6 +676,7 @@ def build_cfa_prompt(investor_profile, accounts, scenario_label):
                 "sub_category": h.get("subCategory"), "cost_value": h.get("costValue"),
                 "current_value": h.get("currentValue"), "risk_rating": h.get("riskRating"),
                 "sip_active": h.get("sipActive"), "sip_amount": h.get("sipAmount"),
+                "plan_type": h.get("planType", "DIRECT"),
             })
         holdings_summary.append({
             "account_type": "Mutual Funds", "total_current_value": mf["current_value"],
@@ -502,6 +686,7 @@ def build_cfa_prompt(investor_profile, accounts, scenario_label):
             "account_type": "MUTUAL_FUND", "total_transactions": len(mf["transactions"]),
         })
 
+    # --- Equities ---
     for eq in accounts["equities"]:
         eq_h = []
         for h in eq["holdings"]:
@@ -517,6 +702,61 @@ def build_cfa_prompt(investor_profile, accounts, scenario_label):
         })
         txn_summary.append({
             "account_type": "EQUITIES", "total_transactions": len(eq["transactions"]),
+        })
+
+    # --- NPS ---
+    for nps in accounts.get("nps", []):
+        nps_h = []
+        for h in nps.get("holdings", []):
+            nps_h.append({
+                "scheme": h.get("schemeName"), "scheme_type": h.get("schemeType"),
+                "allocation_pct": h.get("allocationPercentage"), "current_value": h.get("currentValue"),
+                "returns_pct": h.get("returnsPercentage"), "asset_class": h.get("assetClass"),
+            })
+        holdings_summary.append({
+            "account_type": "NPS", "current_value": nps["current_value"],
+            "total_contribution": nps["total_contribution"], "gains": nps["gains"],
+            "scheme_preference": nps["scheme_preference"],
+            "retirement_projection": nps.get("retirement_projection", {}),
+            "holdings": nps_h,
+        })
+        txn_summary.append({
+            "account_type": "NPS", "total_transactions": len(nps.get("transactions", [])),
+        })
+
+    # --- Government Securities / SGBs ---
+    for gs in accounts.get("govt_securities", []):
+        gs_h = []
+        for h in gs.get("holdings", []):
+            gs_h.append({
+                "instrument": h.get("instrumentName"), "type": h.get("instrumentType"),
+                "quantity": h.get("quantity"), "holding_value": h.get("holdingValue"),
+                "investment_value": h.get("investmentValue"), "pnl": h.get("pnl"),
+                "coupon_rate": h.get("couponRate"), "maturity_date": h.get("maturityDate"),
+                "ytm": h.get("yieldToMaturity"),
+            })
+        holdings_summary.append({
+            "account_type": "Government Securities & Gold Bonds",
+            "current_value": gs["current_value"],
+            "investment_value": gs["investment_value"], "holdings": gs_h,
+        })
+        txn_summary.append({
+            "account_type": "GOVT_SECURITIES", "total_transactions": len(gs.get("transactions", [])),
+        })
+
+    # --- EPF ---
+    for epf in accounts.get("epf", []):
+        holdings_summary.append({
+            "account_type": "EPF (Employee Provident Fund)",
+            "balance": epf["balance"], "interest_rate": epf.get("interest_rate"),
+        })
+
+    # --- PPF ---
+    for ppf in accounts.get("ppf", []):
+        holdings_summary.append({
+            "account_type": "PPF (Public Provident Fund)",
+            "balance": ppf["balance"], "interest_rate": ppf.get("interest_rate"),
+            "maturity_date": ppf.get("maturity_date"),
         })
 
     age = investor_profile.get("age", "Unknown")
@@ -557,18 +797,83 @@ def build_cfa_prompt(investor_profile, accounts, scenario_label):
             + "\n".join(star_context_lines) + "\n"
         )
 
+    # Build demographics context (scenarios 7-10)
+    demo_section = ""
+    occupation = investor_profile.get("occupation", {})
+    income = investor_profile.get("income", {})
+    expenses = investor_profile.get("expenses", {})
+    liabilities = investor_profile.get("liabilities", {})
+    insurance = investor_profile.get("insurance", {})
+    goals = investor_profile.get("goals", [])
+    tax = investor_profile.get("tax", {})
+    if occupation or income or goals:
+        demo_lines = []
+        if investor_profile.get("marital_status"):
+            demo_lines.append(f"- Marital Status: {investor_profile.get('marital_status')}")
+        if investor_profile.get("residential_status") and investor_profile.get("residential_status") != "RESIDENT":
+            demo_lines.append(f"- Residential Status: {investor_profile.get('residential_status')}")
+        if investor_profile.get("city"):
+            demo_lines.append(f"- City: {investor_profile.get('city')}")
+        deps = investor_profile.get("dependents", [])
+        if deps:
+            dep_str = ", ".join(f"{d.get('name','?')} ({d.get('relation','?')}, age {d.get('age','?')})" for d in deps)
+            demo_lines.append(f"- Dependents: {dep_str}")
+        if occupation:
+            demo_lines.append(f"- Occupation: {occupation.get('designation', '')} at {occupation.get('employer', '')} ({occupation.get('type', '')})")
+            if occupation.get("years_to_retirement"):
+                demo_lines.append(f"- Years to Retirement: {occupation['years_to_retirement']}")
+        if demo_lines:
+            demo_section += "\n## Demographics\n" + "\n".join(demo_lines) + "\n"
+
+    income_section = ""
+    if income:
+        income_section = f"\n## Income\n{json.dumps(income, indent=2)}\n"
+
+    expense_section = ""
+    if expenses:
+        expense_section = f"\n## Expenses\n{json.dumps(expenses, indent=2)}\n"
+
+    liability_section = ""
+    if liabilities and any(v for k, v in liabilities.items() if v and k not in ("total_emi", "total_outstanding", "debt_to_income_ratio", "emi_to_income_ratio")):
+        liability_section = f"\n## Liabilities\n{json.dumps(liabilities, indent=2)}\n"
+
+    insurance_section = ""
+    if insurance:
+        insurance_section = f"\n## Insurance\n{json.dumps(insurance, indent=2)}\n"
+
+    goals_section = ""
+    if goals:
+        goals_section = f"\n## Financial Goals\n{json.dumps(goals, indent=2)}\n"
+
+    tax_section = ""
+    if tax:
+        tax_section = f"\n## Tax Profile\n{json.dumps(tax, indent=2)}\n"
+
     system_prompt = (
-        "You are a CFA-certified financial advisor. Analyze the following investor portfolio "
-        "data obtained via Account Aggregator (AA) framework. Provide a CONCISE but complete analysis "
-        "structured into exactly four sections. Base your reasoning on CFA Institute standards, "
+        "You are a CFA Level III charterholder and SEBI-registered investment advisor. "
+        "Analyze the investor's COMPLETE financial picture using CFA Institute standards, "
         "modern portfolio theory, and Indian market context.\n\n"
+        "KNOWLEDGE BASE:\n"
+        "- Asset Allocation: age-based equity rule (100 - age = equity %), core-satellite approach\n"
+        "- Fixed Deposits: compare rates vs inflation (6-7%), FD vs debt MF tax efficiency, TDS implications\n"
+        "- NPS: max 75% equity in active choice, 60% lumpsum tax-free at retirement, 40% mandatory annuity, 80CCD(1B) extra 50K deduction\n"
+        "- EPF/PPF: tax-free returns, PPF 15-year lock-in, EPF taxable if withdrawn before 5 years\n"
+        "- SGBs: 2.5% coupon + gold appreciation, LTCG tax-free at maturity, 5-year early exit window\n"
+        "- G-Secs: duration risk, YTM analysis, interest rate sensitivity\n"
+        "- Insurance: term life = 10-15x annual income, health = min 10L metro / 5L non-metro\n"
+        "- Self-employed: advance tax quarterly, business vs personal expense separation, keyman insurance, working capital management\n"
+        "- ULIPs: high charges, compare with term + MF combo, surrender if lock-in complete\n"
+        "- Tax: ELSS 80C up to 1.5L, LTCG >1.25L at 12.5%, STCG at 20%, 80CCD(1B) NPS 50K, 80D health premiums\n"
+        "- Regular vs Direct plans: 0.5-1.5% expense ratio difference, always recommend direct\n"
+        "- Emergency fund: 6 months expenses in liquid instruments\n"
+        "- Star ratings (1-5): 4-5 RETAIN, 3 WATCH, 1-2 SWITCH\n\n"
         "FORMAT RULES:\n"
         "- Use bullet points, not paragraphs\n"
         "- Use tables only for allocation breakdowns and rebalancing actions\n"
-        "- Each bullet should be 1 line with the key insight + number\n"
-        "- No explanations of what terms mean — assume the reader is financially literate\n"
-        "- Total response should be under 800 words\n"
-        "- Lead with the verdict, then the data supporting it"
+        "- Each bullet: 1 line with key insight + number\n"
+        "- Assume the reader is financially literate\n"
+        "- Total response under 1200 words\n"
+        "- Lead with the verdict, then data"
     )
 
     user_prompt = f"""
@@ -581,51 +886,51 @@ def build_cfa_prompt(investor_profile, accounts, scenario_label):
 - PAN: {investor_profile.get('pan', 'N/A')}
 - Nominee Registered: {investor_profile.get('nominee', 'N/A')}
 - KYC Status: {investor_profile.get('kyc', 'N/A')}
-
+{demo_section}
 ## Portfolio Holdings
 {json.dumps(holdings_summary, indent=2)}
-{star_section}
+{star_section}{income_section}{expense_section}{liability_section}{insurance_section}{goals_section}{tax_section}
 ## Transaction Activity (Last 12 Months)
 {json.dumps(txn_summary, indent=2)}
 
 ---
 
-Use the star ratings and MRAR data to evaluate fund quality. If rated 3 stars or below, recommend the suggested alternatives. If 4-5 stars, recommend retaining.
-
-Keep the response CONCISE — use bullet points, not paragraphs. Under 800 words total. Lead with verdict, then supporting data.
+Analyze the COMPLETE financial picture. If demographics/income/goals/liabilities/insurance data is provided, use it for deeper analysis. If only portfolio data is available, analyze based on holdings alone.
 
 ### 1. PORTFOLIO ANALYSIS
-Cover in bullet points with numbers:
-- Asset allocation table (equity/debt/cash %)
-- Diversification verdict (sector + market-cap spread)
-- Top concentration risks (any holding >15%?)
-- P&L summary (total invested vs current, overall return %)
-- Cost efficiency (direct plans? expense ratio estimate)
-- SIP discipline (monthly amount, consistency)
+- Asset allocation table (equity / debt / cash / gold / NPS / EPF-PPF %)
+- Diversification verdict (sector, market-cap, geography spread)
+- Concentration risks (any single holding >15%? any sector >25%?)
+- P&L summary across all asset classes
+- Cost efficiency (direct vs regular plans, FD rates vs inflation)
+- SIP discipline and savings rate assessment
 
-### 2. INVESTMENT SUITABILITY
-Cover in bullet points:
-- Age {age}: current vs recommended allocation — is it suitable? (one line verdict)
-- Risk capacity assessment (one line)
-- Liquidity gap: emergency fund current vs needed
-- Goal alignment: wealth creation / retirement / short-term readiness
-- Compliance flags: KYC and nominee status
+### 2. INVESTMENT SUITABILITY & LIFE STAGE
+- Age {age}: current vs recommended allocation — verdict
+- Risk capacity based on income stability, dependents, liabilities
+- Emergency fund: current vs needed (6x monthly expenses)
+- Goal gap analysis: for each goal, current progress vs required (with SIP amounts if applicable)
+- Retirement readiness: projected corpus vs target (if applicable)
+- Insurance adequacy: life cover vs 10-15x income, health cover gaps
+- Compliance: KYC, nominee status
 
-### 3. RECOMMENDATIONS
-Use a rebalancing table (Current % -> Target %) then bullet points for:
-- Fund switches (based on star ratings — name specific funds)
-- SIP changes (specific amounts)
-- Tax actions (ELSS, LTCG harvesting — with numbers)
-- Emergency fund action (how much to move where)
-- Critical gaps (insurance, nominee — if applicable)
+### 3. RECOMMENDATIONS (prioritized)
+Rebalancing table (Current % -> Target %) then:
+- URGENT: emergency fund, insurance gaps, nominee registration
+- Fund switches (star ratings, regular-to-direct, underperformers)
+- SIP changes (specific amounts tied to goals)
+- Debt management (prepay high-rate loans? EMI optimization)
+- Tax optimization (unused 80C/80CCD/80D, LTCG harvesting, regime choice)
+- NPS/EPF/PPF actions (if applicable)
+- Self-employed specific: business vs personal separation, working capital, advance tax planning
 
 ### 4. RISK ASSESSMENT
-Cover in bullet points:
-- Portfolio beta and expected drawdown in a 20% market crash
-- Biggest concentration risk (name the stock/sector/AMC)
-- Liquidity risk verdict (one line)
-- Behavioral flags from transaction patterns
-- **Overall Risk Rating: Conservative / Moderate / Aggressive** (bold, one line)
+- Portfolio risk metrics (beta estimate, drawdown in 20% crash)
+- Concentration risks (name specific stocks/sectors/AMCs)
+- Liquidity risk (locked assets: FD, NPS, PPF, ELSS vs liquid)
+- Liability risk (debt-to-income, EMI burden)
+- Behavioral flags from transactions (panic selling, tip-based buying, etc.)
+- **Overall Risk Rating: Conservative / Moderate / Aggressive** (bold)
 """
     return system_prompt, user_prompt
 
@@ -641,7 +946,7 @@ def get_cfa_analysis(investor_profile, accounts, scenario_label):
             {"role": "user", "content": user_prompt},
         ],
         temperature=0.3,
-        max_tokens=2000,
+        max_tokens=3000,
     )
     return response.choices[0].message.content, response.usage.total_tokens
 
@@ -649,14 +954,26 @@ def get_cfa_analysis(investor_profile, accounts, scenario_label):
 # ============================================================
 # SIDEBAR
 # ============================================================
+all_categories = discover_scenarios()
+
 with st.sidebar:
     st.markdown('<p class="main-header">CFA Analyzer</p>', unsafe_allow_html=True)
     st.markdown('<p class="sub-header">Powered by Fine-Tuned CFA Model</p>', unsafe_allow_html=True)
     st.divider()
 
-    selected_scenario = st.selectbox("Select Scenario", list(SCENARIOS.keys()), index=2)
-    st.divider()
+    # Category dropdown
+    cat_names = list(all_categories.keys())
+    selected_cat = st.selectbox("Category", cat_names, index=0)
 
+    # Scenario dropdown within category
+    cat_scenarios = all_categories[selected_cat]
+    scenario_names = list(cat_scenarios.keys())
+    selected_scenario = st.selectbox("Scenario", scenario_names, index=0)
+
+    st.divider()
+    st.caption(f"{sum(len(v) for v in all_categories.values())} scenarios across {len(all_categories)} categories")
+
+    st.divider()
     st.markdown("**Model Info**")
     st.code(FINE_TUNED_MODEL, language=None)
 
@@ -666,17 +983,11 @@ with st.sidebar:
     st.caption("ReBIT FI Schema v2.0.0")
     st.caption(f"Star Ratings: {len(STAR_RATINGS):,} funds loaded")
 
-    st.divider()
-    st.markdown("**Scenarios**")
-    st.caption("1 - Mutual Funds Only")
-    st.caption("2 - Equities/Stocks Only")
-    st.caption("3 - Combined Portfolio")
-
 
 # ============================================================
 # MAIN CONTENT
 # ============================================================
-data = load_scenario(SCENARIOS[selected_scenario])
+data = load_scenario(cat_scenarios[selected_scenario])
 profile = extract_investor_profile(data)
 accounts = extract_all_accounts(data)
 totals = compute_portfolio_totals(accounts)
